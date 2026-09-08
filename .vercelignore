@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.chrome-*/
+.edge-*/
+references/
+design-system/
+desktop-*.png
+mobile-*.png
+vca-*.png
+CREATIVE-PROMPTS.md
+README.md

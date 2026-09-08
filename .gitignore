@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.vercel/
+.chrome-*/
+.edge-*/
+*.log
+desktop-*.png
+mobile-*.png
+vca-*.png
+
+.vercel
