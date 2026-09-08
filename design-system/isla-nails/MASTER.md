@@ -7,9 +7,9 @@
 ---
 
 **Project:** ISLA Nails
-**Generated:** 2026-09-08 07:44:22
+**Generated:** 2026-09-08 08:22:13
 **Category:** E-commerce Luxury
-**Design Dials:** Variance 5/10 (Balanced / Modern) | Motion 6/10 (Standard) | Density 2/10 (Spacious)
+**Design Dials:** Variance 4/10 (Balanced / Modern) | Motion 4/10 (Standard) | Density 4/10 (Standard)
 
 ---
 
@@ -19,18 +19,18 @@
 
 | Role | Hex | CSS Variable |
 |------|-----|--------------|
-| Primary | `#18181B` | `--color-primary` |
+| Primary | `#92400E` | `--color-primary` |
 | On Primary | `#FFFFFF` | `--color-on-primary` |
-| Secondary | `#3F3F46` | `--color-secondary` |
-| Accent/CTA | `#EC4899` | `--color-accent` |
-| Background | `#FAFAFA` | `--color-background` |
-| Foreground | `#09090B` | `--color-foreground` |
-| Muted | `#E8ECF0` | `--color-muted` |
-| Border | `#E4E4E7` | `--color-border` |
+| Secondary | `#A16207` | `--color-secondary` |
+| Accent/CTA | `#6366F1` | `--color-accent` |
+| Background | `#FFFBEB` | `--color-background` |
+| Foreground | `#0F172A` | `--color-foreground` |
+| Muted | `#F8F3F0` | `--color-muted` |
+| Border | `#F1E8E2` | `--color-border` |
 | Destructive | `#DC2626` | `--color-destructive` |
-| Ring | `#18181B` | `--color-ring` |
+| Ring | `#92400E` | `--color-ring` |
 
-**Color Notes:** Editorial black + accent pink
+**Color Notes:** Warm journal brown + ink violet
 
 ### Typography
 
@@ -46,17 +46,17 @@
 
 ### Spacing Variables
 
-*Density: 2/10 — Spacious*
+*Density: 4/10 — Standard*
 
 | Token | Value | Usage |
 |-------|-------|-------|
 | `--space-xs` | `4px` / `0.25rem` | Tight gaps |
 | `--space-sm` | `8px` / `0.5rem` | Icon gaps, inline spacing |
-| `--space-md` | `24px` / `1.5rem` | Standard padding |
-| `--space-lg` | `32px` / `2rem` | Section padding |
-| `--space-xl` | `48px` / `3rem` | Large gaps |
-| `--space-2xl` | `64px` / `4rem` | Section margins |
-| `--space-3xl` | `96px` / `6rem` | Hero padding |
+| `--space-md` | `16px` / `1rem` | Standard padding |
+| `--space-lg` | `24px` / `1.5rem` | Section padding |
+| `--space-xl` | `32px` / `2rem` | Large gaps |
+| `--space-2xl` | `48px` / `3rem` | Section margins |
+| `--space-3xl` | `64px` / `4rem` | Hero padding |
 
 ### Shadow Depths
 
@@ -76,7 +76,7 @@
 ```css
 /* Primary Button */
 .btn-primary {
-  background: #EC4899;
+  background: #6366F1;
   color: white;
   padding: 12px 24px;
   border-radius: 8px;
@@ -93,8 +93,8 @@
 /* Secondary Button */
 .btn-secondary {
   background: transparent;
-  color: #18181B;
-  border: 2px solid #18181B;
+  color: #92400E;
+  border: 2px solid #92400E;
   padding: 12px 24px;
   border-radius: 8px;
   font-weight: 600;
@@ -107,7 +107,7 @@
 
 ```css
 .card {
-  background: #FAFAFA;
+  background: #FFFBEB;
   border-radius: 12px;
   padding: 24px;
   box-shadow: var(--shadow-md);
@@ -133,9 +133,9 @@
 }
 
 .input:focus {
-  border-color: #18181B;
+  border-color: #92400E;
   outline: none;
-  box-shadow: 0 0 0 3px #18181B20;
+  box-shadow: 0 0 0 3px #92400E20;
 }
 ```
 
@@ -161,21 +161,21 @@
 
 ## Style Guidelines
 
-**Style:** 3D & Hyperrealism
+**Style:** Trust & Authority
 
-**Keywords:** Depth, realistic textures, 3D models, spatial navigation, tactile, skeuomorphic elements, rich detail, immersive
+**Keywords:** Certificates/badges displayed, expert credentials, case studies with metrics, before/after comparisons, industry recognition, security badges
 
-**Best For:** Gaming, product showcase, immersive experiences, high-end e-commerce, architectural viz, VR/AR
+**Best For:** Healthcare/medical landing pages, financial services, enterprise software, premium/luxury products, legal services
 
-**Key Effects:** WebGL/Three.js 3D, realistic shadows (layers), physics lighting, parallax (3-5 layers), smooth 3D (300-400ms)
+**Key Effects:** Badge hover effects, metric pulse animations, certificate carousel, smooth stat reveal
 
 ### Page Pattern
 
-**Pattern Name:** Immersive/Interactive Experience
+**Pattern Name:** Horizontal Scroll Journey
 
-- **Conversion Strategy:** 40% higher engagement. Performance trade-off. Provide skip option. Mobile fallback essential.
-- **CTA Placement:** After interaction complete + Skip option for impatient users
-- **Section Order:** 1. Full-screen interactive element, 2. Guided product tour, 3. Key benefits revealed, 4. CTA after completion
+- **Conversion Strategy:** Immersive product discovery. High engagement. Keep navigation visible.
+- **CTA Placement:** Floating Sticky CTA or End of Horizontal Track
+- **Section Order:** 1. Intro (Vertical), 2. The Journey (Horizontal Track), 3. Detail Reveal, 4. Vertical Footer
 
 ---
 

@@ -1,140 +1,86 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ArrowDown, ArrowLeft, ArrowRight, Menu, Minus, Plus, Search, ShoppingBag, UserRound, X } from 'lucide-react';
+import { ArrowDown, ArrowLeft, ArrowRight, Check, ChevronDown, Copy, Mail, Menu, Minus, PackageCheck, Plus, RefreshCcw, Search, Share2, ShieldCheck, ShoppingBag, Sparkles, UserRound, X } from 'lucide-react';
 import './styles.css';
 
 const products = [
-  { id: 'lagoon', name: 'Lagoon Veil', note: 'Translucent aqua · shell inlay', price: 46, tone: 'aqua', description: 'A sheer lagoon wash layered with hand-cut mother-of-pearl and a barely-there champagne edge.' },
-  { id: 'conch', name: 'Conch Blush', note: 'Coral glaze · pearl tide', price: 44, tone: 'coral', description: 'Warm conch pink with a liquid-glass finish and a soft pearlescent tide line.' },
-  { id: 'moon', name: 'Moon Shell', note: 'Ivory pearl · sculpted shell', price: 52, tone: 'pearl', description: 'Sculpted shell ridges, opaline highlights and a fine gold seam, finished by hand.' },
-  { id: 'reef', name: 'Reef No. 07', note: 'Sea glass · coral fragments', price: 49, tone: 'reef', description: 'Sea-glass green punctuated with miniature coral fragments in an asymmetric composition.' },
-  { id: 'night', name: 'After the Tide', note: 'Deep ocean · moonlit chrome', price: 48, tone: 'night', description: 'A deep-ocean glaze with a cool moonlit reflection that changes as the hand moves.' },
+  { id: 'lagoon', name: 'Lagoon Veil', collection: 'Tidal Collection', note: 'Translucent aqua · shell inlay', price: 46, tone: 'aqua', shape: 'Almond', length: 'Medium', stock: 18, description: 'A sheer lagoon wash layered with hand-cut mother-of-pearl and a barely-there champagne edge.' },
+  { id: 'conch', name: 'Conch Blush', collection: 'Tidal Collection', note: 'Coral glaze · pearl tide', price: 44, tone: 'coral', shape: 'Oval', length: 'Short', stock: 24, description: 'Warm conch pink with a liquid-glass finish and a soft pearlescent tide line.' },
+  { id: 'moon', name: 'Moon Shell', collection: 'Tidal Collection', note: 'Ivory pearl · sculpted shell', price: 52, tone: 'pearl', shape: 'Almond', length: 'Medium', stock: 12, description: 'Sculpted shell ridges, opaline highlights and a fine gold seam, finished by hand.' },
+  { id: 'reef', name: 'Reef No. 07', collection: 'Tidal Collection', note: 'Sea glass · coral fragments', price: 49, tone: 'reef', shape: 'Squoval', length: 'Short', stock: 9, description: 'Sea-glass green punctuated with miniature coral fragments in an asymmetric composition.' },
+  { id: 'night', name: 'After the Tide', collection: 'Tidal Collection', note: 'Deep ocean · moonlit chrome', price: 48, tone: 'night', shape: 'Almond', length: 'Long', stock: 15, description: 'A deep-ocean glaze with a cool moonlit reflection that changes as the hand moves.' },
 ];
 
-function Logo() {
-  return <a className="logo" href="#top" aria-label="ISLA home"><span>ISLA</span><small>NAIL OBJECTS</small></a>;
+const journal = [
+  { tag: 'FIELD NOTES', title: 'The colors we found below the tide line', excerpt: 'Lagoon glass, sun-warmed coral and the quiet sheen inside a shell.', tone: 'journal-aqua', number: '01' },
+  { tag: 'NAIL RITUALS', title: 'A considered guide to finding your fit', excerpt: 'Measure once, wear often. Our simple path to a made-for-you finish.', tone: 'journal-coral', number: '02' },
+];
+
+function Logo() { return <a className="logo" href="#top" aria-label="ISLA home"><span>ISLA</span><small>NAIL OBJECTS</small></a>; }
+function NailSet({ tone }) { return <div className={`nail-set ${tone}`} aria-hidden="true">{[0, 1, 2, 3, 4].map((n) => <i key={n}><b /></i>)}</div>; }
+
+function TrustStrip({ compact = false }) {
+  return <div className={`trust-strip ${compact ? 'compact' : ''}`}><div><PackageCheck /><span><b>Complimentary shipping</b><small>On every order</small></span></div><div><RefreshCcw /><span><b>14-day returns</b><small>Unworn sets only</small></span></div><div><ShieldCheck /><span><b>Secure checkout</b><small>Encrypted payment</small></span></div><div><Sparkles /><span><b>Reusable by design</b><small>Application kit included</small></span></div></div>;
 }
 
-function NailSet({ tone }) {
-  return (
-    <div className={`nail-set ${tone}`} aria-hidden="true">
-      {[0, 1, 2, 3, 4].map((n) => <i key={n}><b /></i>)}
-    </div>
-  );
-}
+function PaymentMarks() { return <div className="payment-marks" aria-label="Accepted payment methods"><span>VISA</span><span className="mastercard"><i /><i /></span><span>PayPal</span><span>AMEX</span><span>Apple Pay</span></div>; }
 
 function App() {
   const [active, setActive] = useState(0);
   const [selected, setSelected] = useState(null);
+  const [selectedSize, setSelectedSize] = useState('M');
   const [quantity, setQuantity] = useState(1);
   const [bag, setBag] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [newsletter, setNewsletter] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
+  const [shareState, setShareState] = useState('Share');
   const trackRef = useRef(null);
-  const drag = useRef({ down: false, x: 0, left: 0 });
+  const drag = useRef({ down: false, x: 0, left: 0, moved: false });
 
-  const focusProduct = (index) => {
-    const next = (index + products.length) % products.length;
-    setActive(next);
-    trackRef.current?.children[next]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-  };
+  const focusProduct = (index) => { const next = (index + products.length) % products.length; setActive(next); trackRef.current?.children[next]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); };
+  const openProduct = (product, updateHistory = true) => { setSelected(product); setSelectedSize('M'); setQuantity(1); setShareState('Share'); if (updateHistory) window.history.pushState({ product: product.id }, '', `?product=${product.id}`); };
+  const closeProduct = (updateHistory = true) => { setSelected(null); if (!updateHistory) return; if (window.history.state?.product) window.history.back(); else window.history.replaceState({}, '', window.location.pathname + window.location.hash); };
+  const shareProduct = async () => { const url = `${window.location.origin}${window.location.pathname}?product=${selected.id}`; try { if (navigator.share) await navigator.share({ title: `${selected.name} — ISLA`, text: selected.note, url }); else await navigator.clipboard.writeText(url); setShareState(navigator.share ? 'Shared' : 'Link copied'); } catch (error) { if (error?.name !== 'AbortError') setShareState('Copy failed'); } };
 
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    const observer = new IntersectionObserver((entries) => {
-      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (visible) setActive(Number(visible.target.dataset.index));
-    }, { root: track, threshold: [0.55, 0.75] });
-    [...track.children].forEach((child) => observer.observe(child));
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    document.body.style.overflow = selected || menuOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [selected, menuOpen]);
-
+  useEffect(() => { const track = trackRef.current; if (!track) return; const observer = new IntersectionObserver((entries) => { const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]; if (visible) setActive(Number(visible.target.dataset.index)); }, { root: track, threshold: [0.55, 0.75] }); [...track.children].forEach((child) => observer.observe(child)); return () => observer.disconnect(); }, []);
+  useEffect(() => { const sync = () => { const product = products.find((item) => item.id === new URLSearchParams(window.location.search).get('product')); setSelected(product || null); }; sync(); window.addEventListener('popstate', sync); return () => window.removeEventListener('popstate', sync); }, []);
+  useEffect(() => { document.body.style.overflow = selected || menuOpen ? 'hidden' : ''; return () => { document.body.style.overflow = ''; }; }, [selected, menuOpen]);
+  useEffect(() => { const onKeyDown = (event) => { if (event.key === 'Escape') { if (selected) closeProduct(); if (menuOpen) setMenuOpen(false); } }; window.addEventListener('keydown', onKeyDown); return () => window.removeEventListener('keydown', onKeyDown); }, [selected, menuOpen]);
   const current = products[active];
 
-  return (
-    <>
-      <a className="skip-link" href="#collection">Skip to collection</a>
-      <main>
-        <section id="top" className="hero" aria-labelledby="hero-title">
-          <div className="hero-media" role="img" aria-label="Island-inspired pearl and lagoon manicure campaign">
-            <div className="hero-orbit orbit-one" />
-            <div className="hero-orbit orbit-two" />
-            <div className="hero-placeholder"><NailSet tone="hero-nails" /></div>
-          </div>
-          <header className="nav">
-            <button className="nav-action menu-button" aria-label="Open menu" onClick={() => setMenuOpen(true)}><Menu size={18} strokeWidth={1.25} /><span>Menu</span></button>
-            <Logo />
-            <div className="nav-tools">
-              <button className="nav-action desktop-only" aria-label="Search"><Search size={17} strokeWidth={1.25} /></button>
-              <button className="nav-action desktop-only" aria-label="Account"><UserRound size={17} strokeWidth={1.25} /></button>
-              <button className="nav-action bag-button" aria-label={`Shopping bag, ${bag} items`}><ShoppingBag size={17} strokeWidth={1.25} />{bag > 0 && <span className="bag-count">{bag}</span>}</button>
-            </div>
-          </header>
-          <div className="hero-copy">
-            <p>THE TIDAL COLLECTION · 01</p>
-            <h1 id="hero-title">Light, held by water.</h1>
-            <a href="#collection">Discover the collection</a>
-          </div>
-          <a href="#collection" className="scroll-cue" aria-label="Scroll to shop"><span>Shop the tide</span><ArrowDown size={17} strokeWidth={1.25} /></a>
-        </section>
+  return <>
+    <a className="skip-link" href="#collection">Skip to collection</a>
+    <main>
+      <section id="top" className="hero" aria-labelledby="hero-title">
+        <div className="hero-media" role="img" aria-label="Island-inspired pearl and lagoon manicure campaign"><div className="hero-orbit orbit-one" /><div className="hero-orbit orbit-two" /></div>
+        <header className="nav"><button className="nav-action menu-button" aria-label="Open menu" onClick={() => setMenuOpen(true)}><Menu size={18} strokeWidth={1.25} /><span>Menu</span></button><Logo /><div className="nav-tools"><button className="nav-action desktop-only" aria-label="Search"><Search size={17} strokeWidth={1.25} /></button><button className="nav-action desktop-only" aria-label="Account"><UserRound size={17} strokeWidth={1.25} /></button><button className="nav-action bag-button" aria-label={`Shopping bag, ${bag} items`}><ShoppingBag size={17} strokeWidth={1.25} />{bag > 0 && <span className="bag-count">{bag}</span>}</button></div></header>
+        <div className="hero-copy"><p>THE TIDAL COLLECTION · 01</p><h1 id="hero-title">Light, held by water.</h1><a href="#collection">Discover the collection</a></div>
+        <a href="#collection" className="scroll-cue" aria-label="Scroll to shop"><span>Shop the tide</span><ArrowDown size={17} strokeWidth={1.25} /></a>
+      </section>
 
-        <section id="collection" className="collection" aria-labelledby="collection-title">
-          <div className="collection-heading">
-            <p>THE TIDAL COLLECTION</p>
-            <h2 id="collection-title">Five small worlds,<br />made by hand.</h2>
-          </div>
+      <section id="collection" className="collection" aria-labelledby="collection-title">
+        <div className="collection-heading"><div><p>SHOP · NEW ARRIVALS</p><h2 id="collection-title">The Tidal Collection</h2></div><p className="collection-intro">Five hand-finished sets shaped by water, shell and the colors of an imagined shore.</p></div>
+        <div className="product-stage"><div className="product-info" aria-live="polite"><span>{String(active + 1).padStart(2, '0')} / {String(products.length).padStart(2, '0')}</span><h3>{current.name}</h3><p>{current.note}</p><strong>${current.price}.00</strong><button onClick={() => openProduct(current)}>View details</button></div>
+          <div className="product-track" ref={trackRef} onPointerDown={(e) => { drag.current = { down: true, x: e.clientX, left: e.currentTarget.scrollLeft, moved: false }; e.currentTarget.setPointerCapture(e.pointerId); }} onPointerMove={(e) => { if (drag.current.down) { const delta = e.clientX - drag.current.x; if (Math.abs(delta) > 5) drag.current.moved = true; e.currentTarget.scrollLeft = drag.current.left - delta; } }} onPointerUp={() => { drag.current.down = false; }} onPointerCancel={() => { drag.current.down = false; }} aria-label="Tidal nail collection carousel">{products.map((product, index) => <button className={`product-card ${active === index ? 'active' : ''}`} key={product.id} data-index={index} onClick={() => { if (drag.current.moved) return; if (active === index) openProduct(product); else focusProduct(index); }} aria-label={`${product.name}, $${product.price}`}><span className="product-art"><NailSet tone={product.tone} /></span><span className="mobile-product-label"><span><em>{product.collection}</em><b>{product.name}</b></span><small>${product.price}.00</small></span></button>)}</div>
+          <div className="carousel-controls"><button onClick={() => focusProduct(active - 1)} aria-label="Previous product"><ArrowLeft size={19} strokeWidth={1.25} /></button><div><i style={{ width: `${((active + 1) / products.length) * 100}%` }} /></div><button onClick={() => focusProduct(active + 1)} aria-label="Next product"><ArrowRight size={19} strokeWidth={1.25} /></button></div>
+        </div><a className="text-link view-all" href="#catalog">View all nail sets <ArrowRight size={16} /></a>
+      </section>
 
-          <div className="product-stage">
-            <div className="product-info" aria-live="polite">
-              <span>{String(active + 1).padStart(2, '0')} / {String(products.length).padStart(2, '0')}</span>
-              <h3>{current.name}</h3>
-              <p>{current.note}</p>
-              <strong>${current.price}.00</strong>
-              <button onClick={() => { setSelected(current); setQuantity(1); }}>View details</button>
-            </div>
+      <section id="catalog" className="catalog" aria-labelledby="catalog-title"><div className="section-title"><p>SHOP THE EDIT</p><h2 id="catalog-title">Our nail objects</h2><span>Each set is finished by hand in a small edition.</span></div><div className="catalog-grid">{products.map((product, index) => <article className="catalog-card" key={product.id}><button onClick={() => openProduct(product)} aria-label={`View ${product.name}`}><span className="catalog-art"><NailSet tone={product.tone} /></span></button><div><p>{product.collection}</p><h3>{product.name}</h3><span>{product.shape} · {product.length}</span><strong>${product.price}.00</strong></div>{index === 0 && <i className="badge">NEW</i>}</article>)}</div></section>
+      <section id="craft" className="craft"><p>THE ISLA METHOD</p><h2>Wearable keepsakes<br />from an imagined shore.</h2><div className="craft-grid"><span>01<br /><b>Hand-layered gel</b></span><span>02<br /><b>Reusable fit</b></span><span>03<br /><b>Made in small editions</b></span></div></section>
+      <section id="journal" className="journal" aria-labelledby="journal-title"><div className="section-title"><p>ISLAND JOURNAL</p><h2 id="journal-title">Notes from the shore</h2><span>Color stories, rituals and practical guides for wearing your set.</span></div><div className="journal-grid">{journal.map((article) => <article key={article.number}><div className={`journal-visual ${article.tone}`}><span>{article.number}</span><NailSet tone={article.number === '01' ? 'aqua' : 'coral'} /></div><p>{article.tag}</p><h3>{article.title}</h3><span>{article.excerpt}</span><a className="text-link" href={`#journal-${article.number}`}>Read journal <ArrowRight size={15} /></a></article>)}</div></section>
+      <section className="assurance" aria-label="Shopping assurances"><TrustStrip /></section>
+      <section className="newsletter" aria-labelledby="newsletter-title"><div><p>LETTERS FROM ISLA</p><h2 id="newsletter-title">A little summer,<br />delivered slowly.</h2></div><form onSubmit={(e) => { e.preventDefault(); if (newsletter) setSubscribed(true); }}><label htmlFor="newsletter-email">Email address</label><div>{subscribed ? <p className="success"><Check size={18} /> You’re on the list.</p> : <><input id="newsletter-email" type="email" required autoComplete="email" placeholder="you@example.com" value={newsletter} onChange={(e) => setNewsletter(e.target.value)} /><button type="submit">Subscribe <ArrowRight size={17} /></button></>}</div><small>Occasional notes, new editions and early access. Unsubscribe anytime.</small></form></section>
+    </main>
 
-            <div
-              className="product-track"
-              ref={trackRef}
-              onPointerDown={(e) => { drag.current = { down: true, x: e.clientX, left: e.currentTarget.scrollLeft }; e.currentTarget.setPointerCapture(e.pointerId); }}
-              onPointerMove={(e) => { if (drag.current.down) e.currentTarget.scrollLeft = drag.current.left - (e.clientX - drag.current.x); }}
-              onPointerUp={() => { drag.current.down = false; }}
-              onPointerCancel={() => { drag.current.down = false; }}
-              aria-label="Tidal nail collection carousel"
-            >
-              {products.map((product, index) => (
-                <button className={`product-card ${active === index ? 'active' : ''}`} key={product.id} data-index={index} onClick={() => { if (active === index) { setSelected(product); setQuantity(1); } else focusProduct(index); }} aria-label={`${product.name}, $${product.price}`}>
-                  <span className="product-art"><NailSet tone={product.tone} /></span>
-                  <span className="mobile-product-label"><b>{product.name}</b><small>${product.price}.00</small></span>
-                </button>
-              ))}
-            </div>
+    <footer className="footer" id="contact"><div className="footer-brand"><Logo /><p>Small objects.<br />Long summers.</p><a href="mailto:hello@islanailobjects.com"><Mail size={15} /> hello@islanailobjects.com</a></div><div className="footer-links"><div><h3>Shop</h3><a href="#collection">New arrivals</a><a href="#catalog">All nail sets</a><a href="#catalog">Short length</a><a href="#catalog">Medium length</a><a href="#catalog">The Tidal Collection</a></div><div><h3>Help</h3><a href="#size-guide">Size guide</a><a href="#shipping">Shipping & returns</a><a href="#care">Application & care</a><a href="#contact">Contact us</a><a href="#faq">FAQ</a></div><div><h3>ISLA</h3><a href="#craft">Our method</a><a href="#journal">Journal</a><a href="#sustainability">Materials</a><a href="#accessibility">Accessibility</a><a href="#privacy">Privacy</a></div></div><div className="footer-bottom"><div><span>SECURE PAYMENT</span><PaymentMarks /></div><div className="legal"><span>© 2026 ISLA Nail Objects</span><a href="#terms">Terms</a><a href="#privacy">Privacy</a></div></div></footer>
 
-            <div className="carousel-controls">
-              <button onClick={() => focusProduct(active - 1)} aria-label="Previous product"><ArrowLeft size={19} strokeWidth={1.25} /></button>
-              <div><i style={{ width: `${((active + 1) / products.length) * 100}%` }} /></div>
-              <button onClick={() => focusProduct(active + 1)} aria-label="Next product"><ArrowRight size={19} strokeWidth={1.25} /></button>
-            </div>
-          </div>
-        </section>
+    {menuOpen && <div className="menu-panel" role="dialog" aria-modal="true" aria-label="Main menu"><button className="close" onClick={() => setMenuOpen(false)} aria-label="Close menu"><X size={22} strokeWidth={1.25} /></button><Logo /><div className="menu-map"><nav><span>SHOP</span><a href="#collection" onClick={() => setMenuOpen(false)}>New arrivals</a><a href="#catalog" onClick={() => setMenuOpen(false)}>All nail sets</a><a href="#catalog" onClick={() => setMenuOpen(false)}>The Tidal Collection</a></nav><nav><span>SHOP BY SHAPE</span><a href="#catalog" onClick={() => setMenuOpen(false)}>Almond</a><a href="#catalog" onClick={() => setMenuOpen(false)}>Oval</a><a href="#catalog" onClick={() => setMenuOpen(false)}>Squoval</a></nav><nav><span>DISCOVER</span><a href="#craft" onClick={() => setMenuOpen(false)}>Our method</a><a href="#journal" onClick={() => setMenuOpen(false)}>Island journal</a><a href="#contact" onClick={() => setMenuOpen(false)}>Customer care</a></nav></div><small>Small objects. Long summers.</small></div>}
 
-        <section className="craft">
-          <p>THE ISLA METHOD</p>
-          <h2>Wearable keepsakes<br />from an imagined shore.</h2>
-          <div className="craft-grid"><span>01<br /><b>Hand-layered gel</b></span><span>02<br /><b>Reusable fit</b></span><span>03<br /><b>Made in small editions</b></span></div>
-        </section>
-      </main>
-
-      {menuOpen && <div className="menu-panel" role="dialog" aria-modal="true" aria-label="Main menu"><button className="close" onClick={() => setMenuOpen(false)} aria-label="Close menu"><X size={22} strokeWidth={1.25} /></button><Logo /><nav><a href="#collection" onClick={() => setMenuOpen(false)}>Shop the collection</a><a href="#craft" onClick={() => setMenuOpen(false)}>Our craft</a><a href="#journal" onClick={() => setMenuOpen(false)}>Island journal</a><a href="#contact" onClick={() => setMenuOpen(false)}>Contact</a></nav><small>Small objects. Long summers.</small></div>}
-
-      {selected && <div className="drawer-backdrop" onMouseDown={(e) => { if (e.target === e.currentTarget) setSelected(null); }}><aside className="product-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title"><button className="close" onClick={() => setSelected(null)} aria-label="Close product details"><X size={22} strokeWidth={1.25} /></button><div className="drawer-art"><NailSet tone={selected.tone} /></div><div className="drawer-content"><p>{selected.note}</p><h2 id="drawer-title">{selected.name}</h2><strong>${selected.price}.00</strong><p className="description">{selected.description}</p><div className="size-selector"><span>SIZE</span><button className="selected">S</button><button>M</button><button>L</button><a href="#size-guide">Size guide</a></div><div className="purchase-row"><div className="quantity"><button onClick={() => setQuantity(Math.max(1, quantity - 1))} aria-label="Decrease quantity"><Minus size={15} /></button><span>{quantity}</span><button onClick={() => setQuantity(quantity + 1)} aria-label="Increase quantity"><Plus size={15} /></button></div><button className="add-button" onClick={() => { setBag(bag + quantity); setSelected(null); }}>Add to bag · ${(selected.price * quantity).toFixed(2)}</button></div><small>Complimentary worldwide shipping · Reusable application kit included</small></div></aside></div>}
-    </>
-  );
+    {selected && <div className="product-page" role="dialog" aria-modal="true" aria-labelledby="product-title"><header className="product-page-nav"><button onClick={() => closeProduct()} aria-label="Close product"><ArrowLeft size={20} /> Back</button><Logo /><button className="bag-button" aria-label={`Shopping bag, ${bag} items`}><ShoppingBag size={18} />{bag > 0 && <span className="bag-count">{bag}</span>}</button></header><div className="breadcrumbs"><span>Home</span><i>/</i><span>Shop</span><i>/</i><span>{selected.collection}</span><i>/</i><b>{selected.name}</b></div><div className="product-layout"><div className="product-gallery"><div className="gallery-thumbs"><button className="active" aria-label="Front view"><NailSet tone={selected.tone} /></button><button aria-label="Detail view"><NailSet tone={selected.tone} /></button><button aria-label="Set view"><NailSet tone={selected.tone} /></button></div><div className="gallery-main"><NailSet tone={selected.tone} /><span>HAND-FINISHED · SET OF 10</span></div></div><div className="product-summary"><p>{selected.collection}</p><h1 id="product-title">{selected.name}</h1><div className="price-row"><strong>${selected.price}.00</strong><span><Check size={14} /> In stock · {selected.stock} sets</span></div><p className="product-description">{selected.description}</p><dl><div><dt>SHAPE</dt><dd>{selected.shape}</dd></div><div><dt>LENGTH</dt><dd>{selected.length}</dd></div><div><dt>FINISH</dt><dd>High-gloss sculpted gel</dd></div></dl><fieldset><legend>SELECT YOUR SIZE <a href="#size-guide">Size guide</a></legend><div className="size-options">{['XS', 'S', 'M', 'L'].map((size) => <button type="button" key={size} className={selectedSize === size ? 'selected' : ''} onClick={() => setSelectedSize(size)} aria-pressed={selectedSize === size}>{size}</button>)}</div></fieldset><div className="purchase-row"><div className="quantity"><button onClick={() => setQuantity(Math.max(1, quantity - 1))} aria-label="Decrease quantity"><Minus size={15} /></button><span>{quantity}</span><button onClick={() => setQuantity(quantity + 1)} aria-label="Increase quantity"><Plus size={15} /></button></div><button className="add-button" onClick={() => { setBag(bag + quantity); closeProduct(); }}>Add to bag · ${(selected.price * quantity).toFixed(2)}</button></div><button className="share-button" onClick={shareProduct}>{shareState === 'Link copied' ? <Copy size={16} /> : <Share2 size={16} />}{shareState}</button><TrustStrip compact /><PaymentMarks /><div className="detail-accordions"><details open><summary>What’s included <ChevronDown size={16} /></summary><p>10 reusable nails · Application kit · Alcohol prep pad · Care card</p></details><details id="shipping"><summary>Shipping & returns <ChevronDown size={16} /></summary><p>Complimentary tracked shipping. Unworn sets may be returned within 14 days of delivery.</p></details><details id="care"><summary>Application & care <ChevronDown size={16} /></summary><p>Apply to clean, dry nails. Remove gently with warm water and cuticle oil, then store in the original tray.</p></details></div></div></div></div>}
+    <div className="sr-status" aria-live="polite">{shareState !== 'Share' ? shareState : ''}</div>
+  </>;
 }
 
 createRoot(document.getElementById('root')).render(<App />);
