@@ -7,9 +7,9 @@
 ---
 
 **Project:** ISLA Nails
-**Generated:** 2026-09-08 08:22:13
+**Generated:** 2026-09-08 08:45:00
 **Category:** E-commerce Luxury
-**Design Dials:** Variance 4/10 (Balanced / Modern) | Motion 4/10 (Standard) | Density 4/10 (Standard)
+**Design Dials:** Variance 3/10 (Centered / Minimal) | Motion 3/10 (Subtle) | Density 5/10 (Standard)
 
 ---
 
@@ -19,34 +19,34 @@
 
 | Role | Hex | CSS Variable |
 |------|-----|--------------|
-| Primary | `#92400E` | `--color-primary` |
+| Primary | `#EC4899` | `--color-primary` |
 | On Primary | `#FFFFFF` | `--color-on-primary` |
-| Secondary | `#A16207` | `--color-secondary` |
-| Accent/CTA | `#6366F1` | `--color-accent` |
-| Background | `#FFFBEB` | `--color-background` |
-| Foreground | `#0F172A` | `--color-foreground` |
-| Muted | `#F8F3F0` | `--color-muted` |
-| Border | `#F1E8E2` | `--color-border` |
+| Secondary | `#F9A8D4` | `--color-secondary` |
+| Accent/CTA | `#8B5CF6` | `--color-accent` |
+| Background | `#FDF2F8` | `--color-background` |
+| Foreground | `#831843` | `--color-foreground` |
+| Muted | `#F1EEF5` | `--color-muted` |
+| Border | `#FBCFE8` | `--color-border` |
 | Destructive | `#DC2626` | `--color-destructive` |
-| Ring | `#92400E` | `--color-ring` |
+| Ring | `#EC4899` | `--color-ring` |
 
-**Color Notes:** Warm journal brown + ink violet
+**Color Notes:** Soft pink + lavender luxury
 
 ### Typography
 
-- **Heading Font:** Rubik
-- **Body Font:** Nunito Sans
-- **Mood:** ecommerce, clean, shopping, product, retail, conversion
-- **Google Fonts:** [Rubik + Nunito Sans](https://fonts.google.com/share?selection.family=Nunito+Sans:wght@300;400;500;600;700|Rubik:wght@300;400;500;600;700)
+- **Heading Font:** Playfair Display
+- **Body Font:** Source Serif 4
+- **Mood:** monochrome, editorial, austere, typographic, pocket manifesto, luxury, high contrast, brutalist mobile
+- **Google Fonts:** [Playfair Display + Source Serif 4](https://fonts.google.com/share?selection.family=JetBrains+Mono:wght@400;500|Playfair+Display:ital,wght@0,400;0,700;0,900;1,400|Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300)
 
 **CSS Import:**
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;500;600;700&family=Rubik:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap');
 ```
 
 ### Spacing Variables
 
-*Density: 4/10 — Standard*
+*Density: 5/10 — Standard*
 
 | Token | Value | Usage |
 |-------|-------|-------|
@@ -76,7 +76,7 @@
 ```css
 /* Primary Button */
 .btn-primary {
-  background: #6366F1;
+  background: #8B5CF6;
   color: white;
   padding: 12px 24px;
   border-radius: 8px;
@@ -93,8 +93,8 @@
 /* Secondary Button */
 .btn-secondary {
   background: transparent;
-  color: #92400E;
-  border: 2px solid #92400E;
+  color: #EC4899;
+  border: 2px solid #EC4899;
   padding: 12px 24px;
   border-radius: 8px;
   font-weight: 600;
@@ -107,7 +107,7 @@
 
 ```css
 .card {
-  background: #FFFBEB;
+  background: #FDF2F8;
   border-radius: 12px;
   padding: 24px;
   box-shadow: var(--shadow-md);
@@ -133,9 +133,9 @@
 }
 
 .input:focus {
-  border-color: #92400E;
+  border-color: #EC4899;
   outline: none;
-  box-shadow: 0 0 0 3px #92400E20;
+  box-shadow: 0 0 0 3px #EC489920;
 }
 ```
 
@@ -161,37 +161,37 @@
 
 ## Style Guidelines
 
-**Style:** Trust & Authority
+**Style:** Exaggerated Minimalism
 
-**Keywords:** Certificates/badges displayed, expert credentials, case studies with metrics, before/after comparisons, industry recognition, security badges
+**Keywords:** Bold minimalism, oversized typography, high contrast, negative space, loud minimal, statement design
 
-**Best For:** Healthcare/medical landing pages, financial services, enterprise software, premium/luxury products, legal services
+**Best For:** Fashion, architecture, portfolios, agency landing pages, luxury brands, editorial
 
-**Key Effects:** Badge hover effects, metric pulse animations, certificate carousel, smooth stat reveal
+**Key Effects:** font-size: clamp(3rem 10vw 12rem), font-weight: 900, letter-spacing: -0.05em, massive whitespace
 
 ### Page Pattern
 
-**Pattern Name:** Horizontal Scroll Journey
+**Pattern Name:** Interactive 3D Configurator
 
-- **Conversion Strategy:** Immersive product discovery. High engagement. Keep navigation visible.
-- **CTA Placement:** Floating Sticky CTA or End of Horizontal Track
-- **Section Order:** 1. Intro (Vertical), 2. The Journey (Horizontal Track), 3. Detail Reveal, 4. Vertical Footer
+- **Conversion Strategy:** Increases ownership feeling. 360 view reduces return rates. Direct add-to-cart.
+- **CTA Placement:** Inside Configurator UI + Sticky Bottom Bar
+- **Section Order:** 1. Hero (Configurator), 2. Feature Highlight (synced), 3. Price/Specs, 4. Purchase
 
 ---
 
 ## Motion
 
-**Page Transition** (Standard) — Trigger: route change | Duration: 400-600ms | Easing: `power2.inOut`
+**Page Transition** (Subtle) — Trigger: route change | Duration: 200-300ms | Easing: `power1.inOut`
 
 ```js
-const tl = gsap.timeline(); tl.to('.transition-overlay', { yPercent: 0, duration: 0.4, ease: 'power2.inOut' }).call(navigate).to('.transition-overlay', { yPercent: -100, duration: 0.4, ease: 'power2.inOut', delay: 0.1 });
+gsap.to(main, { opacity: 0, duration: 0.2, onComplete: () => { navigate(); gsap.fromTo(main, { opacity: 0 }, { opacity: 1, duration: 0.2 }); } });
 ```
 
-**Framework notes:** Keep the overlay element mounted at the layout root (outside the page component) so it survives the route swap
+**Framework notes:** Pair with the router's transition hooks (Next.js App Router transitions, React Router's useNavigate, Vue Router's beforeEach/afterEach)
 
-- ✅ Show a lightweight loading indicator if the destination route's data fetch outlasts the overlay
-- ❌ Don't tie the overlay's reveal directly to data-fetch completion without a max-wait timeout; a slow API stalls the whole transition
-- ⚡ Prefer CSS transform (yPercent) over top/left to keep the overlay animation on the compositor thread
+- ✅ Preload the destination route's critical assets before the exit tween finishes
+- ❌ Don't block navigation on animation; cap exit duration at ~250ms so the app never feels unresponsive
+- ⚡ Exit animation should always resolve faster than entrance (asymmetric timing) so back/forward feels snappy
 
 ---
 
