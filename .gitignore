@@ -10,3 +10,4 @@ vca-*.png
 qa-*.png
 
 .vercel
+raw_data/

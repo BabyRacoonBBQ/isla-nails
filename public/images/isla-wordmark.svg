@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" role="img" aria-labelledby="title desc">
+  <title id="title">ISLA NAIL STUDIO wordmark</title>
+  <desc id="desc">Minimal luxury wordmark for a feminine nail studio.</desc>
+  <rect width="1200" height="420" fill="none"/>
+  <g fill="#1d1b1b" text-anchor="middle">
+    <text x="600" y="215" font-family="Cormorant Garamond, Didot, Bodoni 72, Times New Roman, serif" font-size="128" font-weight="500" letter-spacing="22">ISLA</text>
+    <circle cx="600" cy="265" r="3.5" fill="#b79a73"/>
+    <text x="600" y="315" font-family="Helvetica Neue, Arial, sans-serif" font-size="19" font-weight="400" letter-spacing="11">NAIL STUDIO</text>
+  </g>
+</svg>
