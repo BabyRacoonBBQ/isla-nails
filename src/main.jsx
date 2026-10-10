@@ -75,13 +75,37 @@ function CheckoutPage({ cart, count, subtotal, discount, onBack, onPlaceOrder })
 
 function OrderSuccess({ email, onContinue }) { return <div className="shop-flow order-success" role="dialog" aria-modal="true"><Logo /><span><Check size={28} /></span><p>ORDER REQUEST RECEIVED</p><h1>Thank you.<br />The tide is on its way.</h1><p>This was a demonstration order. No payment was collected. A production confirmation would be sent to <b>{email}</b>.</p><button onClick={onContinue}>Continue shopping</button></div>; }
 
+function LaunchPage({ onBack }) {
+  const submitted = new URLSearchParams(window.location.search).get('submitted') === '1';
+  const nextUrl = `${window.location.origin}${window.location.pathname}?view=launch&submitted=1`;
+  return <div className="launch-page" role="dialog" aria-modal="true" aria-labelledby="launch-title">
+    <header className="launch-nav"><button onClick={onBack}><ArrowLeft size={17} /> Back to isla</button><Logo compact /><span>COMING SOON</span></header>
+    <div className="launch-layout">
+      <section className="launch-copy">
+        <p className="launch-eyebrow">ISLA NAIL STUDIO · FIRST DROP</p>
+        <h1 id="launch-title">The first drop<br />is almost here.</h1>
+        <p className="launch-intro">Small, reusable nail objects for long summers. Leave your email and we’ll send one note when the shop opens.</p>
+        {submitted ? <div className="launch-success" role="status"><Check size={18} /> You’re on the launch list.</div> : <form className="launch-form" action="https://formsubmit.co/hello@islanailobjects.com" method="POST">
+          <input type="hidden" name="_subject" value="New isla launch-list signup" />
+          <input type="hidden" name="_next" value={nextUrl} />
+          <input type="hidden" name="_captcha" value="true" />
+          <label htmlFor="launch-email">Email address</label>
+          <div><input id="launch-email" name="email" type="email" required autoComplete="email" placeholder="you@example.com" /><button type="submit">Notify me <ArrowRight size={17} /></button></div>
+        </form>}
+        <small className="launch-note">One launch email only. No weekly newsletter. Unsubscribe anytime.</small>
+      </section>
+      <div className="launch-art" role="img" aria-label="A soft island-inspired isla nail studio campaign image"><img src="/images/tidal-hero.png" alt="" /><span>ISLA · 202609</span></div>
+    </div>
+  </div>;
+}
+
 function App() {
   const [active, setActive] = useState(0);
   const [selected, setSelected] = useState(null);
   const [selectedSize, setSelectedSize] = useState('ONE SIZE');
   const [quantity, setQuantity] = useState(1);
   const [cart, setCart] = useState(() => { try { return JSON.parse(window.localStorage.getItem('isla-cart') || '[]'); } catch { return []; } });
-  const [flow, setFlow] = useState(() => { const view = new URLSearchParams(window.location.search).get('view'); return view === 'cart' || view === 'checkout' ? view : null; });
+  const [flow, setFlow] = useState(() => { const view = new URLSearchParams(window.location.search).get('view'); return ['cart', 'checkout', 'launch'].includes(view) ? view : null; });
   const [coupon, setCoupon] = useState('');
   const [couponApplied, setCouponApplied] = useState(false);
   const [couponMessage, setCouponMessage] = useState('');
@@ -123,7 +147,7 @@ function App() {
       </section>
 
       <section id="collection" className="collection" aria-labelledby="collection-title">
-        <div className="collection-heading"><div><p>SHOP · NEW ARRIVALS</p><h2 id="collection-title">The 202609 Edit</h2></div><p className="collection-intro">Twenty-seven hand-finished sets arranged by color, motif and mood. Every design is sold as one reusable, one-size set.</p></div>
+        <div className="collection-heading"><div><p>SHOP · NEW ARRIVALS</p><h2 id="collection-title">The 202609 Edit</h2></div><div className="collection-intro"><p>Twenty-seven hand-finished sets arranged by color, motif and mood. Every design is sold as one reusable, one-size set.</p><a className="launch-list-link" href="?view=launch"><span>Join the launch list</span><ArrowRight size={15} /></a></div></div>
         <div className="product-stage"><div className="product-info" aria-live="polite"><span>{String(active + 1).padStart(2, '0')} / {String(products.length).padStart(2, '0')}</span><h3>{current.name}</h3><p>{current.note}</p><strong>${current.price}.00</strong><button onClick={() => openProduct(current)}>View details</button></div>
           <div className="product-track" ref={trackRef} onPointerDown={(e) => { drag.current = { down: true, x: e.clientX, left: e.currentTarget.scrollLeft, moved: false }; e.currentTarget.setPointerCapture(e.pointerId); }} onPointerMove={(e) => { if (drag.current.down) { const delta = e.clientX - drag.current.x; if (Math.abs(delta) > 5) drag.current.moved = true; e.currentTarget.scrollLeft = drag.current.left - delta; } }} onPointerUp={() => { drag.current.down = false; }} onPointerCancel={() => { drag.current.down = false; }} aria-label="202609 nail collection carousel">{products.map((product, index) => <button className={`product-card ${active === index ? 'active' : ''}`} key={product.id} data-index={index} onClick={() => { if (drag.current.moved) return; if (active === index) openProduct(product); else focusProduct(index); }} aria-label={`${product.name}, $${product.price}`}><span className="product-art"><ProductImage src={product.image} alt="" /></span><span className="mobile-product-label"><span><em>{product.collection}</em><b>{product.name}</b></span><small>${product.price}.00</small></span></button>)}</div>
           <div className="carousel-controls"><button onClick={() => focusProduct(active - 1)} aria-label="Previous product"><ArrowLeft size={19} strokeWidth={1.25} /></button><div><i style={{ width: `${((active + 1) / products.length) * 100}%` }} /></div><button onClick={() => focusProduct(active + 1)} aria-label="Next product"><ArrowRight size={19} strokeWidth={1.25} /></button></div>
@@ -145,6 +169,7 @@ function App() {
     {flow === 'cart' && <CartPage cart={cart} count={bag} subtotal={subtotal} discount={discount} coupon={coupon} couponMessage={couponMessage} onCouponChange={setCoupon} onApplyCoupon={applyCoupon} onBack={() => setFlow(null)} onUpdate={updateCart} onRemove={removeCart} onCheckout={() => setFlow('checkout')} onProduct={(product) => { setFlow(null); openProduct(product); }} />}
     {flow === 'checkout' && <CheckoutPage cart={cart} count={bag} subtotal={subtotal} discount={discount} onBack={() => setFlow('cart')} onPlaceOrder={(details) => { setOrderEmail(details.email); setFlow('success'); setCart([]); setCouponApplied(false); }} />}
     {flow === 'success' && <OrderSuccess email={orderEmail} onContinue={() => setFlow(null)} />}
+    {flow === 'launch' && <LaunchPage onBack={() => { setFlow(null); window.history.replaceState({}, '', window.location.pathname + window.location.hash); }} />}
     <div className="sr-status" aria-live="polite">{shareState !== 'Share' ? shareState : ''}</div>
   </>;
 }
